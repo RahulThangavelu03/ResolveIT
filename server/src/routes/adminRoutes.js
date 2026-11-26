@@ -5,6 +5,7 @@ const router = express.Router();
 const pool = require("../config/db");
 const authMiddleware = require("../middleware/authMiddleware");
 const adminMiddleware = require("../middleware/adminMiddleware");
+const eventEmitter = require("../events/eventEmitter");
 
 // GET ALL TICKETS + FILTER
 router.get("/tickets", authMiddleware, adminMiddleware, async (req, res) => {
@@ -83,6 +84,29 @@ router.put("/tickets/:id", authMiddleware, adminMiddleware, async (req, res) => 
              RETURNING *`,
             [status ?? null, priority ?? null, req.params.id]
         );
+
+
+        if (status) {
+    eventEmitter.emit("ticketActivity", {
+        ticketId: result.rows[0].id,
+        actorId: req.user.id,
+        action: "Status Changed",
+        metadata: {
+            newStatus: status
+        }
+    });
+
+    if (status === "Resolved") {
+        eventEmitter.emit("ticketActivity", {
+            ticketId: result.rows[0].id,
+            actorId: req.user.id,
+            action: "Ticket Resolved",
+            metadata: {
+                status: status
+            }
+        });
+    }
+}
 
         if (result.rows.length === 0) {
             return res.status(404).json({

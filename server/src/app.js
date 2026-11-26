@@ -9,6 +9,10 @@ const ticketRoutes = require("./routes/ticketRoutes");
 
 const adminRoutes = require("./routes/adminRoutes");
 
+const commentRoutes = require("./routes/commentRoutes");
+
+
+
 
 // Middleware
 app.use(cors());
@@ -19,6 +23,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/tickets", ticketRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/tickets/:ticketId/comments", commentRoutes);
 
 
 app.get("/", (req, res) => {

@@ -1,7 +1,7 @@
 
 const express = require("express");
 const router = express.Router();
-
+const eventEmitter = require("../events/eventEmitter");
 const pool = require("../config/db");
 const authMiddleware = require("../middleware/authMiddleware");
 
@@ -22,6 +22,15 @@ router.post("/", authMiddleware, async (req, res) => {
              RETURNING *`,
             [req.user.id, title, description, category]
         );
+
+        eventEmitter.emit("ticketActivity", {
+        ticketId: result.rows[0].id,
+        actorId: req.user.id,
+        action: "Ticket Created",
+        metadata: {
+        title: title
+    }
+});
 
         return res.status(201).json({
             message: "Ticket created successfully",
@@ -122,6 +131,16 @@ router.put("/:id", authMiddleware, async (req, res) => {
             [title, description, category, req.params.id, req.user.id]
         );
 
+
+
+        eventEmitter.emit("ticketActivity", {
+        ticketId: result.rows[0].id,
+        actorId: req.user.id,
+        action: "Ticket Updated",
+        metadata: {
+        title: title
+    }
+});
         if (result.rows.length === 0) {
             return res.status(404).json({
                 message: "Ticket not found or cannot be edited"
