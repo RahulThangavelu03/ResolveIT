@@ -5,12 +5,16 @@ const app = express();
 const pool = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 
+const ticketRoutes = require("./routes/ticketRoutes");
+
 // Middleware
 app.use(cors());
 app.use(express.json());
 
+
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/tickets", ticketRoutes);
 
 app.get("/", (req, res) => {
     res.json({
