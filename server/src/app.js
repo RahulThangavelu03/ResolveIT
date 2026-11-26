@@ -7,6 +7,9 @@ const authRoutes = require("./routes/authRoutes");
 
 const ticketRoutes = require("./routes/ticketRoutes");
 
+const adminRoutes = require("./routes/adminRoutes");
+
+
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -15,6 +18,8 @@ app.use(express.json());
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/tickets", ticketRoutes);
+app.use("/api/admin", adminRoutes);
+
 
 app.get("/", (req, res) => {
     res.json({
